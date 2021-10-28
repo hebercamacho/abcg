@@ -7,7 +7,7 @@ void OpenGLWindow::initializeGL() {
   const auto *vertexShader{R"gl(
     #version 410
     layout(location = 0) in vec2 inPosition;
-    layout(location = 1) in vec2 inColor;
+    layout(location = 1) in vec4 inColor;
 
     uniform vec2 translation;
     uniform float scale;
