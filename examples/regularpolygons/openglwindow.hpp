@@ -1,8 +1,6 @@
 #ifndef OPENGLWINDOW_HPP_
 #define OPENGLWINDOW_HPP_
 
-#include <array>
-#include <glm/vec2.hpp>
 #include <random>
 
 #include "abcg.hpp"
@@ -26,14 +24,10 @@ class OpenGLWindow : public abcg::OpenGLWindow {
 
   std::default_random_engine m_randomEngine;
 
-  std::array<glm::vec4, 3> m_vertexColors{glm::vec4{ 0.0f, 0.0f, 0.0f, 1.0f}, 
-                                          glm::vec4{ 0.0f, 0.0f, 0.0f, 1.0f},
-                                          glm::vec4{ 0.0f, 0.0f, 0.0f, 1.0f}};
-  bool desenhar = true; //pausa o programa se false
-  bool random_colors = true; //cores aleatórias se true
-  bool flat_colors = true; //cores sólidas se true
-  int cont = 0;
-  int delay = 100;
-  void setupModel();
+  int m_delay{200};
+  abcg::ElapsedTimer m_elapsedTimer;
+
+  void setupModel(int sides);
 };
+
 #endif

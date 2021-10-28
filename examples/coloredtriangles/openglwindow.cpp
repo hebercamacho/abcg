@@ -51,7 +51,7 @@ void OpenGLWindow::initializeGL() {
 
 
 void OpenGLWindow::paintGL() {
-  if(pausado && cont % delay == 0 && cont != delay)
+  if(desenhar && cont == 0)
     setupModel();
 
   abcg::glViewport(0, 0, m_viewportWidth, m_viewportHeight);  // Set the viewport
@@ -64,7 +64,8 @@ void OpenGLWindow::paintGL() {
   abcg::glBindVertexArray(0);  // End using VAO
   abcg::glUseProgram(0);  // End using the shader program
 
-  if(cont == 600)
+  printf("cont %d delay %d\n", cont, delay);
+  if(cont / delay >= 600)
    cont = 0;
   else cont++;
 }
@@ -81,7 +82,7 @@ void OpenGLWindow::paintUI() {
     ImGui::Begin(" ", nullptr, windowFlags);
 
     //caixa de opções
-    ImGui::Checkbox("Pause", &pausado);
+    ImGui::Checkbox("Play", &desenhar);
     ImGui::Checkbox("Cores sólidas", &flat_colors);
     ImGui::Checkbox("Cores aleatórias", &random_colors);
 
