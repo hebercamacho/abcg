@@ -68,7 +68,7 @@ void OpenGLWindow::paintGL() {
 
   //Render
   abcg::glBindVertexArray(m_vao);  // Start using VAO
-  abcg::glDrawArrays(GL_TRIANGLE_FAN, 0, sides + 2);  // 
+  abcg::glDrawArrays(GL_TRIANGLE_FAN, 0, sides + 1);  // 
 
   abcg::glBindVertexArray(0);  // End using VAO
   abcg::glUseProgram(0);  // End using the shader program
