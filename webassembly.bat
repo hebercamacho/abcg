@@ -1,2 +1,2 @@
-..\emsdk\emsdk_env.bat
-build-wasm.bat
+call ..\emsdk\emsdk_env.bat
+call build-wasm.bat
