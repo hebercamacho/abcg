@@ -8,7 +8,7 @@
 
 # Visual Studio and VS Code
 .vs
-.vscode
+# .vscode
 
 # Build directories
 build
