@@ -4,5 +4,6 @@
 # add_subdirectory(coloredtriangles)
 # add_subdirectory(regularpolygons)
 # add_subdirectory(tictactoe)
-# add_subdirectory(dice)
+add_subdirectory(dice)
 add_subdirectory(lookat)
+add_subdirectory(viewer1)
