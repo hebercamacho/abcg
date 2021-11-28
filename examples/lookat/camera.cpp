@@ -7,11 +7,11 @@ void Camera::computeProjectionMatrix(int width, int height) {
   const auto aspect{static_cast<float>(width) / static_cast<float>(height)};
   m_projMatrix = glm::perspective(glm::radians(70.0f), aspect, 0.1f, 5.0f);
 }
-
+//Atualizar matriz de visão chamando a função lookAt da GLM. Chamar sempre que houver alguma alteração em m_eye ou m_at (movimentação da câmera).
 void Camera::computeViewMatrix() {
   m_viewMatrix = glm::lookAt(m_eye, m_at, m_up);
 }
-
+//função pra movimentar a câmera pra frente e pra trás.
 void Camera::dolly(float speed) {
   // Compute forward vector (view direction)
   const glm::vec3 forward{glm::normalize(m_at - m_eye)};
@@ -22,7 +22,7 @@ void Camera::dolly(float speed) {
 
   computeViewMatrix();
 }
-
+//função pra movimentar a câmera pros lados.
 void Camera::truck(float speed) {
   // Compute forward vector (view direction)
   const glm::vec3 forward{glm::normalize(m_at - m_eye)};
@@ -35,9 +35,9 @@ void Camera::truck(float speed) {
 
   computeViewMatrix();
 }
-
+//função pra movimentar a câmera em torno do eixo y.
 void Camera::pan(float speed) {
-  glm::mat4 transform{glm::mat4(1.0f)};
+  glm::mat4 transform{glm::mat4(1.0f)}; //identidade
 
   // Rotate camera around its local y axis
   transform = glm::translate(transform, m_eye);
