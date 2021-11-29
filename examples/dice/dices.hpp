@@ -21,10 +21,15 @@ class Dices {
   public:
     void initializeGL(GLuint program, int quantity, std::vector<Vertex>, std::vector<GLuint>,int);
     void paintGL(int m_viewportWidth, int m_viewportHeight, float deltaTime);
+    void setupVAO();
     void terminateGL();
 
   private:
     friend OpenGLWindow;
+
+    GLuint m_VAO{};
+    GLuint m_VBO{};
+    GLuint m_EBO{};
 
     GLuint m_program{};
     int m_verticesToDraw{}; //quantidade de vértices do VBO que será processada pela função de renderização, glDrawElements
@@ -36,10 +41,6 @@ class Dices {
     std::vector<GLuint> m_indices; //arranjo de indices lido do arquivo OBJ que será enviado ao EBO
 
     struct Dice {
-      GLuint m_VAO{};
-      GLuint m_VBO{};
-      GLuint m_EBO{};
-
       glm::vec3 m_angle{}; // ângulo de rotação que será enviado à variável uniforme do vertex shader.
       glm::ivec3 m_rotation{}; // nos ajuda a decidir qual a direção da rotação
       glm::vec3 velocidadeAngular{}; //indica quantos graus/rad o dado deve girar por unidade de tempo, em cada um dos eixos x,y,z

@@ -21,6 +21,8 @@ void Dices::initializeGL(GLuint program, int quantity, std::vector<Vertex> verti
   //fmt::print("m_vertices.size(): {}\n", m_vertices.size());
   //fmt::print("m_indices.size(): {}\n", m_indices.size());
   //fmt::print("m_verticesToDraw: {}\n", m_verticesToDraw);
+  
+  setupVAO();
 
   for(auto &dice : m_dices) {
     dice = inicializarDado();
@@ -36,7 +38,7 @@ void Dices::paintGL(int viewportWidth, int viewportHeight, float deltaTime){
   abcg::glUseProgram(m_program); //usar shaders
     
   for(auto &dice : m_dices){
-    abcg::glBindVertexArray(dice.m_VAO); //usar vao
+    abcg::glBindVertexArray(m_VAO); //usar vao
 
     //Dado sendo girado, temos que definir algumas variáveis para ilustrar seu giro de forma realista
     if(dice.dadoGirando){
@@ -127,34 +129,32 @@ void Dices::paintGL(int viewportWidth, int viewportHeight, float deltaTime){
   abcg::glUseProgram(0);
 }
 
-//função para começar o dado numa posição e número aleatório, além de inicializar algumas outras variáveis necessárias
-Dices::Dice Dices::inicializarDado() {
-  Dice dice;
-
+void Dices::setupVAO()
+{
   // Generate VBO
-  abcg::glGenBuffers(1, &dice.m_VBO);
-  abcg::glBindBuffer(GL_ARRAY_BUFFER, dice.m_VBO);
+  abcg::glGenBuffers(1, &m_VBO);
+  abcg::glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
   abcg::glBufferData(GL_ARRAY_BUFFER, sizeof(m_vertices[0]) * m_vertices.size(),
                      m_vertices.data(), GL_STATIC_DRAW);
   abcg::glBindBuffer(GL_ARRAY_BUFFER, 0);
-  ////fmt::print("vbo: {}\n", dice.m_VBO);
+  ////fmt::print("vbo: {}\n", m_VBO);
 
   // Generate EBO
-  abcg::glGenBuffers(1, &dice.m_EBO);
-  abcg::glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, dice.m_EBO);
+  abcg::glGenBuffers(1, &m_EBO);
+  abcg::glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_EBO);
   abcg::glBufferData(GL_ELEMENT_ARRAY_BUFFER,
                      sizeof(m_indices[0]) * m_indices.size(), m_indices.data(),
                      GL_STATIC_DRAW);
   abcg::glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-  ////fmt::print("ebo: {}\n", dice.m_EBO);
+  ////fmt::print("ebo: {}\n", m_EBO);
 
   // Create VAO
-  abcg::glGenVertexArrays(1, &dice.m_VAO);
+  abcg::glGenVertexArrays(1, &m_VAO);
 
   // Bind vertex attributes to current VAO
-  abcg::glBindVertexArray(dice.m_VAO);
-  abcg::glBindBuffer(GL_ARRAY_BUFFER, dice.m_VBO);
-  ////fmt::print("vAo: {}\n", dice.m_VAO);
+  abcg::glBindVertexArray(m_VAO);
+  abcg::glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
+  ////fmt::print("vAo: {}\n", m_VAO);
 
   // Bind vertex attributes
   GLint positionAttribute{abcg::glGetAttribLocation(m_program, "inPosition")}; //layout(location = _)
@@ -174,12 +174,16 @@ Dices::Dice Dices::inicializarDado() {
                                 reinterpret_cast<void*>(offset));
   }
 
-  abcg::glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, dice.m_EBO);
+  abcg::glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_EBO);
 
   // End of binding to current VAO
   abcg::glBindBuffer(GL_ARRAY_BUFFER, 0);
   abcg::glBindVertexArray(0);
-  
+}
+
+//função para começar o dado numa posição e número aleatório, além de inicializar algumas outras variáveis necessárias
+Dices::Dice Dices::inicializarDado() {
+  Dice dice;
   //estado inicial de algumas variáveis
   dice.m_rotation = {0, 0, 0};  
   dice.velocidadeAngular = {0.0f, 0.0f, 0.0f};
@@ -282,10 +286,7 @@ void Dices::checkCollisions(Dice &current_dice) {
 }
 
 void Dices::terminateGL(){
-  for(auto dice : m_dices){
-    abcg::glDeleteBuffers(1, &dice.m_EBO);
-    abcg::glDeleteBuffers(1, &dice.m_VBO);
-    abcg::glDeleteVertexArrays(1, &dice.m_VAO);
-    //fmt::print("Dice terminated.\n");
-  }
+  abcg::glDeleteBuffers(1, &m_EBO);
+  abcg::glDeleteBuffers(1, &m_VBO);
+  abcg::glDeleteVertexArrays(1, &m_VAO);
 }
