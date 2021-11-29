@@ -8,7 +8,7 @@
             "name": "(gdb) Iniciar",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/build/bin/dice/dice.exe",
+            "program": "${workspaceFolder}/build/bin/dicetrack/dicetrack.exe",
             "args": [],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
