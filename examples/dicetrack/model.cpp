@@ -55,8 +55,8 @@ void Model::loadObj(std::string_view path, bool standardize) {
     fmt::print("Warning: {}\n", reader.Warning());
   }
 
-  const auto& attrib{reader.GetAttrib()};
-  const auto& shapes{reader.GetShapes()};
+  const auto& attrib{reader.GetAttrib()}; //conjunto de vertices
+  const auto& shapes{reader.GetShapes()}; //conjunto de objetos (só tem 1)
 
   m_vertices.clear();
   m_indices.clear();
@@ -64,31 +64,37 @@ void Model::loadObj(std::string_view path, bool standardize) {
   // A key:value map with key=Vertex and value=index
   std::unordered_map<Vertex, GLuint> hash{};
 
-  // Loop over shapes
-  for (const auto& shape : shapes) {
-    // Loop over indices
-    for (const auto offset : iter::range(shape.mesh.indices.size())) {
+  // ler todos os triangulos e vertices
+  for (const auto& shape : shapes) { 
+    // pra cada um dos indices
+    for (const auto offset : iter::range(shape.mesh.indices.size())) { //122112 indices = numero de triangulos * 3
       // Access to vertex
-      const tinyobj::index_t index{shape.mesh.indices.at(offset)};
+      const tinyobj::index_t index{shape.mesh.indices.at(offset)}; //offset vai ser de 0 a 122112, index vai acessar cada vertice nessas posições offset
 
       // Vertex position
-      const int startIndex{3 * index.vertex_index};
+      const int startIndex{3 * index.vertex_index}; //startIndex vai encontrar o indice exato de cada vertice
       const float vx{attrib.vertices.at(startIndex + 0)};
       const float vy{attrib.vertices.at(startIndex + 1)};
       const float vz{attrib.vertices.at(startIndex + 2)};
 
+      //são 40704 triangulos, dos quais 27264 brancos.
+      //se fizermos offset / 3 teremos o indice do triangulos
+      
+      const auto material_id = shape.mesh.material_ids.at(offset/3);
+      
       Vertex vertex{};
-      vertex.position = {vx, vy, vz};
+      vertex.position = {vx, vy, vz}; //a chave do vertex é sua posição
+      vertex.color = {(float)material_id, (float)material_id, (float)material_id};
 
       // If hash doesn't contain this vertex
       if (hash.count(vertex) == 0) {
         // Add this index (size of m_vertices)
-        hash[vertex] = m_vertices.size();
+        hash[vertex] = m_vertices.size(); //o valor do hash é a ordem que esse vertex foi lido
         // Add this vertex
-        m_vertices.push_back(vertex);
+        m_vertices.push_back(vertex); //o vértice é adicionado ao arranjo de vértices, se ainda não existir
       }
-
-      m_indices.push_back(hash[vertex]);
+      //no arranjo de índices, podem haver posições duplicadas, pois os vértices podem ser compartilhados por triangulos diferentes
+      m_indices.push_back(hash[vertex]); //o valor do hash deste vértice (suua ordem) é adicionado ao arranjo de indices
     }
   }
 
@@ -130,6 +136,15 @@ void Model::setupVAO(GLuint program) {
     abcg::glEnableVertexAttribArray(positionAttribute);
     abcg::glVertexAttribPointer(positionAttribute, 3, GL_FLOAT, GL_FALSE,
                                 sizeof(Vertex), nullptr);
+  }
+  //aqui a gente passa a cor do vértice já pronta para o shader
+  const GLint colorAttribute{abcg::glGetAttribLocation(program, "inColor")};
+  if (colorAttribute >= 0) {
+    abcg::glEnableVertexAttribArray(colorAttribute);
+    GLsizei offset{sizeof(glm::vec3)};
+    abcg::glVertexAttribPointer(colorAttribute, 3, GL_FLOAT, GL_FALSE,
+                                sizeof(Vertex),
+                                reinterpret_cast<void*>(offset));
   }
 
   // End of binding

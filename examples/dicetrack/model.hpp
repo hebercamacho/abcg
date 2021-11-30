@@ -7,6 +7,7 @@
 
 struct Vertex {
   glm::vec3 position{};
+  glm::vec3 color{};
 
   bool operator==(const Vertex& other) const noexcept {
     return position == other.position;
