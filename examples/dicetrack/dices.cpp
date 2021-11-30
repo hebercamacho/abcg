@@ -20,10 +20,34 @@ void Dices::initializeGL(GLuint program, int quantity, std::vector<Vertex> verti
   createBuffers();
   setupVAO();
 
-  // for(auto &dice : dices) {
-  //   dice = inicializarDado();
-  // }
-  
+  for(auto &dice : dices) {
+    dice = inicializarDado();
+  }
+}
+
+//função para começar o dado numa posição e número aleatório, além de inicializar algumas outras variáveis necessárias
+Dice Dices::inicializarDado() {
+  Dice dice;
+  std::uniform_real_distribution<float> fdist(-1.0f,1.0f);
+  dice.position = glm::vec3{fdist(m_randomEngine),fdist(m_randomEngine),fdist(m_randomEngine)}; //posição inicial completamente aleatória
+  dice.rotation = glm::normalize(glm::vec3{fdist(m_randomEngine),fdist(m_randomEngine),fdist(m_randomEngine)});
+
+  //estado inicial de algumas variáveis
+  // dice.m_rotation = {0, 0, 0};  
+  // dice.velocidadeAngular = {0.0f, 0.0f, 0.0f};
+  // dice.myTime = 0.0f;
+  // dice.quadros=0;
+
+  // std::uniform_real_distribution<float> fdist(-1.5f,1.5f);
+  // dice.translation = {fdist(m_randomEngine),fdist(m_randomEngine),0.0f};
+  // pousarDado(dice); //começar num numero aleatorio
+
+  return dice;
+}
+
+void Dices::jogarDado(Dice &dice) {
+  std::uniform_real_distribution<float> fdist(-1.0f,1.0f);
+  dice.rotation = glm::normalize(glm::vec3{fdist(m_randomEngine),fdist(m_randomEngine),fdist(m_randomEngine)});
 }
 
 void Dices::createBuffers() {
@@ -96,8 +120,4 @@ void Dices::terminateGL() {
   abcg::glDeleteBuffers(1, &m_EBO);
   abcg::glDeleteBuffers(1, &m_VBO);
   abcg::glDeleteVertexArrays(1, &m_VAO);
-}
-
-void Dices::jogarDado(Dice &dice){
-
 }

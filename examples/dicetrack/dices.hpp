@@ -49,6 +49,7 @@ class Dices {
   void createBuffers();
   void setupVAO();
 
+  Dice inicializarDado();
   void jogarDado(Dice &);
 };
 

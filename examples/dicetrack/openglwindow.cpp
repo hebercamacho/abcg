@@ -167,7 +167,7 @@ void OpenGLWindow::paintGL() {
   for(auto &dice : m_dices.dices){
     dice.modelMatrix = m_modelMatrix;
     dice.modelMatrix = glm::translate(dice.modelMatrix, dice.position);
-    dice.modelMatrix = glm::scale(dice.modelMatrix, glm::vec3(0.2f));
+    dice.modelMatrix = glm::scale(dice.modelMatrix, glm::vec3(0.5f));
     dice.modelMatrix = glm::rotate(dice.modelMatrix, m_angle, dice.rotation);
 
     // Set uniform variables of the current object
@@ -212,9 +212,9 @@ void OpenGLWindow::paintUI() {
         ImGui::EndCombo();
       }
       ImGui::PopItemWidth();
-      if(quantity != (int)currentIndex + 1){
+      if(quantity != (int)currentIndex + 1){ //se mudou
         quantity = currentIndex + 1;
-        initializeGL();
+        m_dices.initializeGL(m_program, quantity, m_vertices, m_indices);
       }
     }
     ImGui::End();
