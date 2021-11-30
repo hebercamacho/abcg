@@ -1,12 +1,32 @@
-#include "model.hpp"
+#include "dices.hpp"
 
 #include <cppitertools/itertools.hpp>
 #include <glm/gtx/hash.hpp>
 #include <unordered_map>
 
-void Model::createBuffers(std::vector<Vertex> vertices, std::vector<GLuint> indices) {
+void Dices::initializeGL(GLuint program, int quantity, std::vector<Vertex> vertices, std::vector<GLuint> indices){
+  terminateGL();
+  // Inicializar gerador de números pseudo-aleatórios
+  auto seed{std::chrono::steady_clock::now().time_since_epoch().count()};
+  m_randomEngine.seed(seed);
+
+  m_program = program;
   m_vertices = vertices;
   m_indices = indices;
+
+  dices.clear();
+  dices.resize(quantity);
+
+  createBuffers();
+  setupVAO();
+
+  // for(auto &dice : dices) {
+  //   dice = inicializarDado();
+  // }
+  
+}
+
+void Dices::createBuffers() {
 
   // Delete previous buffers
   abcg::glDeleteBuffers(1, &m_EBO);
@@ -28,19 +48,16 @@ void Model::createBuffers(std::vector<Vertex> vertices, std::vector<GLuint> indi
   abcg::glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 
-void Model::render(int numTriangles) const {
+void Dices::render(){
   abcg::glBindVertexArray(m_VAO);
 
-  const auto numIndices{(numTriangles < 0) ? m_indices.size()
-                                           : numTriangles * 3};
-
-  abcg::glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(numIndices),
+  abcg::glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(m_indices.size()),
                        GL_UNSIGNED_INT, nullptr);
 
   abcg::glBindVertexArray(0);
 }
 
-void Model::setupVAO(GLuint program) {
+void Dices::setupVAO() {
   // Release previous VAO
   abcg::glDeleteVertexArrays(1, &m_VAO);
 
@@ -54,14 +71,14 @@ void Model::setupVAO(GLuint program) {
 
   // Bind vertex attributes
   const GLint positionAttribute{
-      abcg::glGetAttribLocation(program, "inPosition")};
+      abcg::glGetAttribLocation(m_program, "inPosition")};
   if (positionAttribute >= 0) {
     abcg::glEnableVertexAttribArray(positionAttribute);
     abcg::glVertexAttribPointer(positionAttribute, 3, GL_FLOAT, GL_FALSE,
                                 sizeof(Vertex), nullptr);
   }
   //aqui a gente passa a cor do vértice já pronta para o shader
-  const GLint colorAttribute{abcg::glGetAttribLocation(program, "inColor")};
+  const GLint colorAttribute{abcg::glGetAttribLocation(m_program, "inColor")};
   if (colorAttribute >= 0) {
     abcg::glEnableVertexAttribArray(colorAttribute);
     GLsizei offset{sizeof(glm::vec3)};
@@ -75,8 +92,12 @@ void Model::setupVAO(GLuint program) {
   abcg::glBindVertexArray(0);
 }
 
-void Model::terminateGL() {
+void Dices::terminateGL() {
   abcg::glDeleteBuffers(1, &m_EBO);
   abcg::glDeleteBuffers(1, &m_VBO);
   abcg::glDeleteVertexArrays(1, &m_VAO);
+}
+
+void Dices::jogarDado(Dice &dice){
+
 }

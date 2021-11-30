@@ -4,7 +4,7 @@
 #include <tiny_obj_loader.h>
 #include <fmt/core.h>
 #include <glm/gtx/hash.hpp>
-
+#include <glm/gtx/fast_trigonometry.hpp>
 #include <cppitertools/itertools.hpp>
 
 // Explicit specialization of std::hash for Vertex
@@ -52,9 +52,7 @@ void OpenGLWindow::initializeGL() {
   // Load model
   loadObj(getAssetsPath() + "dice.obj");
 
-  m_model.setupVAO(m_program);
-
-  m_trianglesToDraw = m_model.getNumTriangles();
+  m_dices.initializeGL(m_program, quantity, m_vertices, m_indices);
 }
 
 void OpenGLWindow::loadObj(std::string_view path,bool standardize) {
@@ -119,8 +117,6 @@ void OpenGLWindow::loadObj(std::string_view path,bool standardize) {
   if (standardize) {
     this->standardize();
   }
-
-  m_model.createBuffers(m_vertices, m_indices);
 }
 
 void OpenGLWindow::standardize() {
@@ -163,17 +159,22 @@ void OpenGLWindow::paintGL() {
       abcg::glGetUniformLocation(m_program, "projMatrix")};
   const GLint modelMatrixLoc{
       abcg::glGetUniformLocation(m_program, "modelMatrix")};
-  const GLint colorLoc{abcg::glGetUniformLocation(m_program, "color")};
 
   // Set uniform variables used by every scene object
   abcg::glUniformMatrix4fv(viewMatrixLoc, 1, GL_FALSE, &m_viewMatrix[0][0]);
   abcg::glUniformMatrix4fv(projMatrixLoc, 1, GL_FALSE, &m_projMatrix[0][0]);
 
-  // Set uniform variables of the current object
-  abcg::glUniformMatrix4fv(modelMatrixLoc, 1, GL_FALSE, &m_modelMatrix[0][0]);
-  abcg::glUniform4f(colorLoc, 1.0f, 1.0f, 1.0f, 1.0f);  // White
+  for(auto &dice : m_dices.dices){
+    dice.modelMatrix = m_modelMatrix;
+    dice.modelMatrix = glm::translate(dice.modelMatrix, dice.position);
+    dice.modelMatrix = glm::scale(dice.modelMatrix, glm::vec3(0.2f));
+    dice.modelMatrix = glm::rotate(dice.modelMatrix, m_angle, dice.rotation);
 
-  m_model.render(m_trianglesToDraw);
+    // Set uniform variables of the current object
+    abcg::glUniformMatrix4fv(modelMatrixLoc, 1, GL_FALSE, &dice.modelMatrix[0][0]);
+
+    m_dices.render();
+  }
 
   abcg::glUseProgram(0);
 }
@@ -189,10 +190,9 @@ void OpenGLWindow::paintUI() {
     ImGui::PushItemWidth(200);
     //Botão jogar dado
     if(ImGui::Button("Jogar!")){
-      // for(auto &dice : m_dices.m_dices){
-      //   m_dices.jogarDado(dice);
-      // }
-      
+      for(auto &dice : m_dices.dices){
+        m_dices.jogarDado(dice);
+      }
     }
     ImGui::PopItemWidth();
     // Number of dices combo box
@@ -212,10 +212,10 @@ void OpenGLWindow::paintUI() {
         ImGui::EndCombo();
       }
       ImGui::PopItemWidth();
-      // if(quantity != (int)currentIndex + 1){
-      //   quantity = currentIndex + 1;
-      //   initializeGL();
-      // }
+      if(quantity != (int)currentIndex + 1){
+        quantity = currentIndex + 1;
+        initializeGL();
+      }
     }
     ImGui::End();
   }
@@ -229,11 +229,15 @@ void OpenGLWindow::resizeGL(int width, int height) {
 }
 
 void OpenGLWindow::terminateGL() {
-  m_model.terminateGL();
+  m_dices.terminateGL();
   abcg::glDeleteProgram(m_program);
 }
 
 void OpenGLWindow::update() {
+  // Animate angle by 90 degrees per second
+  const float deltaTime{static_cast<float>(getDeltaTime())};
+  m_angle = glm::wrapAngle(m_angle + glm::radians(90.0f) * deltaTime);
+
   m_modelMatrix = m_trackBall.getRotation();
 
   m_viewMatrix =

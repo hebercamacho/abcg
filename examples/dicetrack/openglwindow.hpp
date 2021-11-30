@@ -2,7 +2,7 @@
 #define OPENGLWINDOW_HPP_
 
 #include "abcg.hpp"
-#include "model.hpp"
+#include "dices.hpp"
 #include "trackball.hpp"
 
 class OpenGLWindow : public abcg::OpenGLWindow {
@@ -20,10 +20,11 @@ class OpenGLWindow : public abcg::OpenGLWindow {
   int m_viewportWidth{};
   int m_viewportHeight{};
 
-  Model m_model;
+  Dices m_dices;
+  int quantity{1};
+
   std::vector<Vertex> m_vertices;
   std::vector<GLuint> m_indices;
-  int m_trianglesToDraw{};
 
   TrackBall m_trackBall;
   float m_zoom{};
@@ -31,6 +32,8 @@ class OpenGLWindow : public abcg::OpenGLWindow {
   glm::mat4 m_modelMatrix{1.0f};
   glm::mat4 m_viewMatrix{1.0f};
   glm::mat4 m_projMatrix{1.0f};
+
+  float m_angle{};
 
   void update();
   void loadObj(std::string_view path, bool standardize = true);
