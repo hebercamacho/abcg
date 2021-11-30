@@ -10,7 +10,7 @@ int main(int argc, char **argv) {
     auto window{std::make_unique<OpenGLWindow>()};
     window->setOpenGLSettings({.samples = 4});
     window->setWindowSettings(
-        {.width = 600, .height = 600, .title = "Model Viewer (version 1)"});
+        {.width = 600, .height = 600, .showFPS = true, .showFullscreenButton = true, .title = "Dice 3D"});
 
     app.run(std::move(window));
   } catch (const abcg::Exception &exception) {
