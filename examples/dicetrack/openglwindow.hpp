@@ -21,6 +21,8 @@ class OpenGLWindow : public abcg::OpenGLWindow {
   int m_viewportHeight{};
 
   Model m_model;
+  std::vector<Vertex> m_vertices;
+  std::vector<GLuint> m_indices;
   int m_trianglesToDraw{};
 
   TrackBall m_trackBall;
@@ -31,6 +33,8 @@ class OpenGLWindow : public abcg::OpenGLWindow {
   glm::mat4 m_projMatrix{1.0f};
 
   void update();
+  void loadObj(std::string_view path, bool standardize = true);
+  void standardize();
 };
 
 #endif

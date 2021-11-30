@@ -16,7 +16,7 @@ struct Vertex {
 
 class Model {
  public:
-  void loadObj(std::string_view path, bool standardize = true);
+  void createBuffers(std::vector<Vertex> vertices, std::vector<GLuint> indices);
   void render(int numTriangles = -1) const;
   void setupVAO(GLuint program);
   void terminateGL();
@@ -32,9 +32,6 @@ class Model {
 
   std::vector<Vertex> m_vertices;
   std::vector<GLuint> m_indices;
-
-  void createBuffers();
-  void standardize();
 };
 
 #endif
