@@ -1,6 +1,7 @@
 #include "dices.hpp"
-
+#include <fmt/core.h>
 #include <cppitertools/itertools.hpp>
+#include <glm/gtx/fast_trigonometry.hpp>
 #include <glm/gtx/hash.hpp>
 #include <unordered_map>
 
@@ -28,26 +29,55 @@ void Dices::initializeGL(GLuint program, int quantity, std::vector<Vertex> verti
 //função para começar o dado numa posição e número aleatório, além de inicializar algumas outras variáveis necessárias
 Dice Dices::inicializarDado() {
   Dice dice;
+  //define posição inicial completamente aleatória
   std::uniform_real_distribution<float> fdist(-1.0f,1.0f);
-  dice.position = glm::vec3{fdist(m_randomEngine),fdist(m_randomEngine),fdist(m_randomEngine)}; //posição inicial completamente aleatória
-  dice.rotation = glm::normalize(glm::vec3{fdist(m_randomEngine),fdist(m_randomEngine),fdist(m_randomEngine)});
-
-  //estado inicial de algumas variáveis
-  // dice.m_rotation = {0, 0, 0};  
-  // dice.velocidadeAngular = {0.0f, 0.0f, 0.0f};
-  // dice.myTime = 0.0f;
-  // dice.quadros=0;
-
-  // std::uniform_real_distribution<float> fdist(-1.5f,1.5f);
-  // dice.translation = {fdist(m_randomEngine),fdist(m_randomEngine),0.0f};
-  // pousarDado(dice); //começar num numero aleatorio
+  dice.position = glm::vec3{fdist(m_randomEngine),fdist(m_randomEngine),fdist(m_randomEngine)};
+  
+  //jogarDado(dice);
 
   return dice;
 }
 
 void Dices::jogarDado(Dice &dice) {
-  std::uniform_real_distribution<float> fdist(-1.0f,1.0f);
-  dice.rotation = glm::normalize(glm::vec3{fdist(m_randomEngine),fdist(m_randomEngine),fdist(m_randomEngine)});
+  tempoGirandoAleatorio(dice);
+  dice.dadoGirando = true;
+
+  //  Get random rotation axis
+  std::uniform_real_distribution<float> distRotAxis(-0.5f, 0.5f);
+
+  dice.rotationAxis = glm::normalize(glm::vec3(dice.rotationAxis.x + distRotAxis(m_randomEngine),
+                                      dice.rotationAxis.y + distRotAxis(m_randomEngine),
+                                      dice.rotationAxis.z + distRotAxis(m_randomEngine)));
+
+  // std::uniform_int_distribution<int> idist(0,2);
+  // const int i = idist(m_randomEngine);
+  // glm::vec3 axis{0.0f};
+  // axis[i] = 1.0f;
+  // dice.rotationAxis = glm::normalize(axis); //define um eixo de rotação aleatório
+  fmt::print("dice.rotationAxis.xyz: {} {} {}\n", dice.rotationAxis.x, dice.rotationAxis.y, dice.rotationAxis.z);
+}
+
+void Dices::update(float deltaTime) {
+  for(auto &dice : dices) {
+    //se o dado ainda estiver girando, vamos decrementar do tempo dele
+    if(dice.dadoGirando)
+    {
+      dice.timeLeft -= deltaTime;
+      dice.rotationAngle = glm::wrapAngle(dice.rotationAngle + glm::radians(0.1f) * dice.timeLeft); //definição da velocidade de rotação, grau por quadro
+      // fmt::print("dice.rotationAngle: {}\n", dice.rotationAngle);
+    }
+    //se o tempo acabou, dado não está mais girando
+    if(dice.dadoGirando && dice.timeLeft <= 0){
+      dice.dadoGirando = false;
+    }
+  }
+}
+
+//função para definir tempo de giro do dado, algo entre 2 e 5 segundos 
+void Dices::tempoGirandoAleatorio(Dice &dice){
+  //distribuição aleatória para definir tempo de giro do dado, algo entre 2 e 5 segundos 
+  std::uniform_real_distribution<float> fdist(2.0f,7.0f);
+  dice.timeLeft = fdist(m_randomEngine);
 }
 
 void Dices::createBuffers() {

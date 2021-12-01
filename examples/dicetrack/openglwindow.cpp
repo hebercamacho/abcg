@@ -165,10 +165,14 @@ void OpenGLWindow::paintGL() {
   abcg::glUniformMatrix4fv(projMatrixLoc, 1, GL_FALSE, &m_projMatrix[0][0]);
 
   for(auto &dice : m_dices.dices){
-    dice.modelMatrix = m_modelMatrix;
-    dice.modelMatrix = glm::translate(dice.modelMatrix, dice.position);
+    // fmt::print("dice.modelMatrix.xyzw: {} {} {} {}\n", dice.modelMatrix[0][0], dice.modelMatrix[1][1], dice.modelMatrix[2][2], dice.modelMatrix[3][3]);
+    //dice.modelMatrix = m_modelMatrix;
+    dice.modelMatrix = glm::translate(m_modelMatrix, dice.position);
     dice.modelMatrix = glm::scale(dice.modelMatrix, glm::vec3(0.5f));
-    dice.modelMatrix = glm::rotate(dice.modelMatrix, m_angle, dice.rotation);
+    dice.modelMatrix = glm::rotate(dice.modelMatrix, dice.rotationAngle, dice.rotationAxis);
+
+    //debug
+    // fmt::print("dice.modelMatrix.xyzw: {} {} {} {}\n", dice.modelMatrix[0][0], dice.modelMatrix[1][1], dice.modelMatrix[2][2], dice.modelMatrix[3][3]);
 
     // Set uniform variables of the current object
     abcg::glUniformMatrix4fv(modelMatrixLoc, 1, GL_FALSE, &dice.modelMatrix[0][0]);
@@ -236,6 +240,9 @@ void OpenGLWindow::terminateGL() {
 void OpenGLWindow::update() {
   // Animate angle by 90 degrees per second
   const float deltaTime{static_cast<float>(getDeltaTime())};
+
+  m_dices.update(deltaTime);
+
   m_angle = glm::wrapAngle(m_angle + glm::radians(90.0f) * deltaTime);
 
   m_modelMatrix = m_trackBall.getRotation();
