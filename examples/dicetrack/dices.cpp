@@ -130,12 +130,12 @@ void Dices::setupVAO() {
     abcg::glVertexAttribPointer(positionAttribute, 3, GL_FLOAT, GL_FALSE,
                                 sizeof(Vertex), nullptr);
   }
-  //aqui a gente passa a cor do vértice já pronta para o shader
-  const GLint colorAttribute{abcg::glGetAttribLocation(m_program, "inColor")};
-  if (colorAttribute >= 0) {
-    abcg::glEnableVertexAttribArray(colorAttribute);
+  //aqui a gente passa a normal do vértice já pronta para o shader
+  const GLint normalAttribute{abcg::glGetAttribLocation(m_program, "inNormal")};
+  if (normalAttribute >= 0) {
+    abcg::glEnableVertexAttribArray(normalAttribute);
     GLsizei offset{sizeof(glm::vec3)};
-    abcg::glVertexAttribPointer(colorAttribute, 3, GL_FLOAT, GL_FALSE,
+    abcg::glVertexAttribPointer(normalAttribute, 3, GL_FLOAT, GL_FALSE,
                                 sizeof(Vertex),
                                 reinterpret_cast<void*>(offset));
   }
