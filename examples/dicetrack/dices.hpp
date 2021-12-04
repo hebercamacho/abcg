@@ -17,15 +17,13 @@ struct Vertex {
 };
 
 struct Dice {
-  glm::mat4 modelMatrix{1.0f};
-  glm::vec3 position{0.0f};
-  glm::vec3 rotationAxis{1.0f};
-  glm::vec3 targetAxis{1.0f};
-  glm::vec3 rotationAngle{};
+  glm::mat4 modelMatrix{1.0f}; //a matriz do modelo do dado
+  glm::vec3 position{0.0f}; //indica a posição tridimensional
+  glm::vec3 rotationAngle{}; //indica o ângulo de rotação sobre cada um dos eixos X,Y,Z
   float timeLeft{0.0f}; //indica por quanto tempo o dado ainda continuará girando
-  float spinSpeed{1.0f};
+  float spinSpeed{1.0f}; //define um ângulo para definir a velocidade do giro do dado
   bool dadoGirando{false}; //indica se o dado deve estar girando 
-  glm::ivec3 DoRotateAxis{0}; //indica se deve ou não girar nos eixos X,Y,Z
+  glm::ivec3 DoRotateAxis{}; //indica se deve ou não girar nos eixos X,Y,Z
 };
 
 class Dices {
@@ -58,12 +56,8 @@ class Dices {
 
   Dice inicializarDado();
   void jogarDado(Dice &);
-  void pousarDado(Dice&); 
-  void velocidadeAngularAleatoria(Dice&); 
-  void velocidadeDirecionalAleatoria(Dice&); 
   void tempoGirandoAleatorio(Dice&);
   void eixoAlvoAleatorio(Dice&);
-  void checkCollisions(Dice&);
 };
 
 #endif

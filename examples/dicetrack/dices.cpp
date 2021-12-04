@@ -33,7 +33,7 @@ Dice Dices::inicializarDado() {
   std::uniform_real_distribution<float> fdist(-1.0f,1.0f);
   dice.position = glm::vec3{fdist(m_randomEngine),fdist(m_randomEngine),fdist(m_randomEngine)};
   
-  //jogarDado(dice);
+  jogarDado(dice);
 
   return dice;
 }
@@ -77,14 +77,6 @@ void Dices::eixoAlvoAleatorio(Dice &dice){
   dice.DoRotateAxis = {0, 0, 0};
   std::uniform_int_distribution<int> idist(0,2);
   dice.DoRotateAxis[idist(m_randomEngine)] = 1;
-  
-  // std::uniform_real_distribution<float> distRotAxis(-1.0f, 1.0f);
-
-  // dice.targetAxis = glm::vec3(distRotAxis(m_randomEngine),
-  //                                     distRotAxis(m_randomEngine),
-  //                                     distRotAxis(m_randomEngine));
-  //dice.rotationAxis = glm::normalize(dice.rotationAxis * targetAxis);
-  // fmt::print("dice.rotationAxis.xyz: {} {} {}\n", dice.rotationAxis.x, dice.rotationAxis.y, dice.rotationAxis.z);
 }
 
 void Dices::createBuffers() {
