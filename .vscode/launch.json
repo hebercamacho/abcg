@@ -6,15 +6,20 @@
     "configurations": [
         {
             "name": "(gdb) Iniciar",
-            "type": "cppvsdbg", //print
-            // "type": "cppdbg", //breakpoint
+            // "type": "cppvsdbg", //print
+            "type": "cppdbg", //breakpoint
             "request": "launch",
-            "program": "${workspaceFolder}/build/bin/viewer3/viewer3.exe",
+            "program": "${workspaceFolder}/build/bin/dicetrack/dicetrack.exe",
             "args": [],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}", //abcg
             "environment": [],
             "console": "internalConsole",
+            "outputCapture": "std",
+            "logging": {
+                "exceptions": true,
+                "programOutput": true
+            },
             "MIMode": "gdb",
             "miDebuggerPath": "C:\\msys64\\mingw64\\bin\\gdb.exe",
             "setupCommands": [
