@@ -9,7 +9,7 @@
             "type": "cppvsdbg", //print
             // "type": "cppdbg", //breakpoint
             "request": "launch",
-            "program": "${workspaceFolder}/build/bin/dicetrack/dicetrack.exe",
+            "program": "${workspaceFolder}/build/bin/viewer2/viewer2.exe",
             "args": [],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}", //abcg
