@@ -169,8 +169,9 @@ void OpenGLWindow::paintGL() {
     //dice.modelMatrix = m_modelMatrix;
     dice.modelMatrix = glm::translate(m_modelMatrix, dice.position);
     dice.modelMatrix = glm::scale(dice.modelMatrix, glm::vec3(0.5f));
-    dice.modelMatrix = glm::rotate(dice.modelMatrix, dice.rotationAngle, dice.rotationAxis);
-
+    dice.modelMatrix = glm::rotate(dice.modelMatrix, dice.rotationAngle.x, glm::vec3(1.0f, 0.0f, 0.0f));
+    dice.modelMatrix = glm::rotate(dice.modelMatrix, dice.rotationAngle.y, glm::vec3(0.0f, 1.0f, 0.0f));
+    dice.modelMatrix = glm::rotate(dice.modelMatrix, dice.rotationAngle.z, glm::vec3(0.0f, 0.0f, 1.0f));
     //debug
     // fmt::print("dice.modelMatrix.xyzw: {} {} {} {}\n", dice.modelMatrix[0][0], dice.modelMatrix[1][1], dice.modelMatrix[2][2], dice.modelMatrix[3][3]);
 
@@ -187,8 +188,8 @@ void OpenGLWindow::paintUI() {
   abcg::OpenGLWindow::paintUI();
   //Janela de opções
   {
-    ImGui::SetNextWindowPos(ImVec2(m_viewportWidth / 2, 5));
-    ImGui::SetNextWindowSize(ImVec2(128, 70));
+    ImGui::SetNextWindowPos(ImVec2(m_viewportWidth / 3, 5));
+    ImGui::SetNextWindowSize(ImVec2(-1, -1));
     ImGui::Begin("Button window", nullptr, ImGuiWindowFlags_NoDecoration);
 
     ImGui::PushItemWidth(200);
@@ -221,6 +222,18 @@ void OpenGLWindow::paintUI() {
         m_dices.initializeGL(m_program, quantity, m_vertices, m_indices);
       }
     }
+    //Speed Slider 
+    {
+      ImGui::PushItemWidth(m_viewportWidth / 2);
+
+      ImGui::SliderFloat("", &spinSpeed, 0.01f, 45.0f,
+                       "%1f Degrees");
+      for(auto &dice : m_dices.dices){
+        dice.spinSpeed = spinSpeed;
+      }
+      ImGui::PopItemWidth();
+    }
+
     ImGui::End();
   }
 }

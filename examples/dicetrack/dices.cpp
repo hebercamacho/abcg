@@ -40,21 +40,8 @@ Dice Dices::inicializarDado() {
 
 void Dices::jogarDado(Dice &dice) {
   tempoGirandoAleatorio(dice);
+  eixoAlvoAleatorio(dice);
   dice.dadoGirando = true;
-
-  //  Get random rotation axis
-  std::uniform_real_distribution<float> distRotAxis(-0.5f, 0.5f);
-
-  dice.rotationAxis = glm::normalize(glm::vec3(dice.rotationAxis.x + distRotAxis(m_randomEngine),
-                                      dice.rotationAxis.y + distRotAxis(m_randomEngine),
-                                      dice.rotationAxis.z + distRotAxis(m_randomEngine)));
-
-  // std::uniform_int_distribution<int> idist(0,2);
-  // const int i = idist(m_randomEngine);
-  // glm::vec3 axis{0.0f};
-  // axis[i] = 1.0f;
-  // dice.rotationAxis = glm::normalize(axis); //define um eixo de rotação aleatório
-  fmt::print("dice.rotationAxis.xyz: {} {} {}\n", dice.rotationAxis.x, dice.rotationAxis.y, dice.rotationAxis.z);
 }
 
 void Dices::update(float deltaTime) {
@@ -63,7 +50,12 @@ void Dices::update(float deltaTime) {
     if(dice.dadoGirando)
     {
       dice.timeLeft -= deltaTime;
-      dice.rotationAngle = glm::wrapAngle(dice.rotationAngle + glm::radians(0.1f) * dice.timeLeft); //definição da velocidade de rotação, grau por quadro
+      if(dice.DoRotateAxis.x)
+        dice.rotationAngle.x = glm::wrapAngle(dice.rotationAngle.x + glm::radians(dice.spinSpeed) * dice.timeLeft); //definição da velocidade de rotação, grau por quadro
+      if(dice.DoRotateAxis.y)
+        dice.rotationAngle.y = glm::wrapAngle(dice.rotationAngle.y + glm::radians(dice.spinSpeed) * dice.timeLeft); //definição da velocidade de rotação, grau por quadro
+      if(dice.DoRotateAxis.z)
+        dice.rotationAngle.z = glm::wrapAngle(dice.rotationAngle.z + glm::radians(dice.spinSpeed) * dice.timeLeft); //definição da velocidade de rotação, grau por quadro
       // fmt::print("dice.rotationAngle: {}\n", dice.rotationAngle);
     }
     //se o tempo acabou, dado não está mais girando
@@ -73,11 +65,26 @@ void Dices::update(float deltaTime) {
   }
 }
 
-//função para definir tempo de giro do dado, algo entre 2 e 5 segundos 
+//função para definir tempo de giro do dado, algo entre 2 e 7 segundos 
 void Dices::tempoGirandoAleatorio(Dice &dice){
-  //distribuição aleatória para definir tempo de giro do dado, algo entre 2 e 5 segundos 
   std::uniform_real_distribution<float> fdist(2.0f,7.0f);
   dice.timeLeft = fdist(m_randomEngine);
+}
+
+//função para definir um eixo de rotação aleatório para cada dado, considerando a partir do eixo atual
+void Dices::eixoAlvoAleatorio(Dice &dice){
+  //distribuição aleatória entre 0 e 2, para girar somente 1 eixo
+  dice.DoRotateAxis = {0, 0, 0};
+  std::uniform_int_distribution<int> idist(0,2);
+  dice.DoRotateAxis[idist(m_randomEngine)] = 1;
+  
+  // std::uniform_real_distribution<float> distRotAxis(-1.0f, 1.0f);
+
+  // dice.targetAxis = glm::vec3(distRotAxis(m_randomEngine),
+  //                                     distRotAxis(m_randomEngine),
+  //                                     distRotAxis(m_randomEngine));
+  //dice.rotationAxis = glm::normalize(dice.rotationAxis * targetAxis);
+  // fmt::print("dice.rotationAxis.xyz: {} {} {}\n", dice.rotationAxis.x, dice.rotationAxis.y, dice.rotationAxis.z);
 }
 
 void Dices::createBuffers() {

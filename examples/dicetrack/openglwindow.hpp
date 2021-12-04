@@ -34,6 +34,7 @@ class OpenGLWindow : public abcg::OpenGLWindow {
   glm::mat4 m_projMatrix{1.0f};
 
   float m_angle{};
+  float spinSpeed{1.0f}; //Velocidade de rotação dos dados
 
   void update();
   void loadObj(std::string_view path, bool standardize = true);
