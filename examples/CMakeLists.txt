@@ -7,5 +7,6 @@
 # add_subdirectory(dice)
 # add_subdirectory(lookat)
 # add_subdirectory(viewer1)
-add_subdirectory(viewer2)
+# add_subdirectory(viewer2)
+add_subdirectory(viewer3)
 # add_subdirectory(dicetrack)
