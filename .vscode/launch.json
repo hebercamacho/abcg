@@ -6,12 +6,13 @@
     "configurations": [
         {
             "name": "(gdb) Iniciar",
-            "type": "cppvsdbg",
+            "type": "cppvsdbg", //print
+            // "type": "cppdbg", //breakpoint
             "request": "launch",
             "program": "${workspaceFolder}/build/bin/dicetrack/dicetrack.exe",
             "args": [],
             "stopAtEntry": false,
-            "cwd": "${workspaceFolder}",
+            "cwd": "${workspaceFolder}", //abcg
             "environment": [],
             "console": "internalConsole",
             "MIMode": "gdb",

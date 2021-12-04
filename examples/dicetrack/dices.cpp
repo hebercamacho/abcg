@@ -32,8 +32,8 @@ Dice Dices::inicializarDado() {
   //define posição inicial completamente aleatória
   std::uniform_real_distribution<float> fdist(-1.0f,1.0f);
   dice.position = glm::vec3{fdist(m_randomEngine),fdist(m_randomEngine),fdist(m_randomEngine)};
-  
-  jogarDado(dice);
+
+  //jogarDado(dice); //começar com o dado sendo jogado 
 
   return dice;
 }

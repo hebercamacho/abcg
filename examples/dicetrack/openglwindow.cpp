@@ -32,6 +32,14 @@ void OpenGLWindow::handleEvent(SDL_Event& event) {
   if (event.type == SDL_MOUSEBUTTONUP &&
       event.button.button == SDL_BUTTON_LEFT) {
     m_trackBall.mouseRelease(mousePosition);
+    //fmt::print("mouse position: {} {}\n", mousePosition.x * (2.0f/m_viewportWidth) - 1, mousePosition.y * (-2.0f/m_viewportHeight) + 1);
+    for(auto &dice : m_dices.dices){
+        const auto distanceX = glm::distance((mousePosition.x * (2.0f/m_viewportWidth) - 1), dice.modelMatrix[3].x);
+        const auto distanceY = glm::distance((mousePosition.y * (-2.0f/m_viewportHeight) + 1), dice.modelMatrix[3].y);
+        //fmt::print("distance: {} {}\n", distanceX, distanceY);
+        if(distanceX < 0.4f && distanceY < 0.4f)
+          m_dices.jogarDado(dice);
+    }
   }
   if (event.type == SDL_MOUSEWHEEL) {
     m_zoom += (event.wheel.y > 0 ? 1.0f : -1.0f) / 5.0f;
@@ -173,7 +181,7 @@ void OpenGLWindow::paintGL() {
     dice.modelMatrix = glm::rotate(dice.modelMatrix, dice.rotationAngle.y, glm::vec3(0.0f, 1.0f, 0.0f));
     dice.modelMatrix = glm::rotate(dice.modelMatrix, dice.rotationAngle.z, glm::vec3(0.0f, 0.0f, 1.0f));
     //debug
-    // fmt::print("dice.modelMatrix.xyzw: {} {} {} {}\n", dice.modelMatrix[0][0], dice.modelMatrix[1][1], dice.modelMatrix[2][2], dice.modelMatrix[3][3]);
+    //fmt::print("dice.modelMatrix.xyzw: {} {} {} {}\n", dice.modelMatrix[0][0], dice.modelMatrix[1][1], dice.modelMatrix[2][2], dice.modelMatrix[3][3]);
 
     // Set uniform variables of the current object
     abcg::glUniformMatrix4fv(modelMatrixLoc, 1, GL_FALSE, &dice.modelMatrix[0][0]);
@@ -192,18 +200,18 @@ void OpenGLWindow::paintUI() {
     ImGui::SetNextWindowSize(ImVec2(-1, -1));
     ImGui::Begin("Button window", nullptr, ImGuiWindowFlags_NoDecoration);
 
-    ImGui::PushItemWidth(200);
+    // ImGui::PushItemWidth(200);
     //Botão jogar dado
-    if(ImGui::Button("Jogar!")){
+    if(ImGui::Button("Jogar todos!")){
       for(auto &dice : m_dices.dices){
         m_dices.jogarDado(dice);
       }
     }
-    ImGui::PopItemWidth();
+    // ImGui::PopItemWidth();
     // Number of dices combo box
     {
       static std::size_t currentIndex{};
-      const std::vector<std::string> comboItems{"1", "2", "3"};
+      const std::vector<std::string> comboItems{"1", "2", "3", "4", "5", "6"};
 
       ImGui::PushItemWidth(70);
       if (ImGui::BeginCombo("Dados",
