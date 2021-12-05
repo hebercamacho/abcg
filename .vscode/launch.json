@@ -6,10 +6,10 @@
     "configurations": [
         {
             "name": "(gdb) Iniciar",
-            // "type": "cppvsdbg", //print
-            "type": "cppdbg", //breakpoint
+            "type": "cppvsdbg", //print
+            // "type": "cppdbg", //breakpoint
             "request": "launch",
-            "program": "${workspaceFolder}/build/bin/viewer4/viewer4.exe",
+            "program": "${workspaceFolder}/build/bin/dicetrack/dicetrack.exe",
             "args": [],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}", //abcg

@@ -5,16 +5,23 @@
 #include <random>
 #include "abcg.hpp"
 
-class OpenGLWindow;
-
 struct Vertex {
   glm::vec3 position{};
   glm::vec3 normal{};
+  glm::vec2 texCoord{};
+  glm::vec4 Ka;
+  glm::vec4 Kd;
+  glm::vec4 Ks;
+  float shininess;
 
   bool operator==(const Vertex& other) const noexcept {
     static const auto epsilon{std::numeric_limits<float>::epsilon()};
     return glm::all(glm::epsilonEqual(position, other.position, epsilon)) &&
-           glm::all(glm::epsilonEqual(normal, other.normal, epsilon));
+           glm::all(glm::epsilonEqual(normal, other.normal, epsilon)) &&
+           glm::all(glm::epsilonEqual(texCoord, other.texCoord, epsilon)) &&
+           glm::all(glm::epsilonEqual(Ka, other.Ka, epsilon)) &&
+           glm::all(glm::epsilonEqual(Kd, other.Kd, epsilon)) &&
+           glm::all(glm::epsilonEqual(Ks, other.Ks, epsilon));
   }
 };
 
@@ -30,36 +37,38 @@ struct Dice {
 
 class Dices {
  public:
-  void initializeGL(GLuint program, int quantity, std::vector<Vertex> vertices, std::vector<GLuint> indices);
-  void render();
+  void initializeGL(int quantity);
+  void loadDiffuseTexture(std::string_view path);
+  void loadObj(std::string_view path, bool standardize = true);
+  void render() const;
+  void setupVAO(GLuint program);
   void terminateGL();
   void update(float deltaTime);
-
-  [[nodiscard]] int getNumTriangles() const {
-    return static_cast<int>(m_indices.size()) / 3;
-  }
+  void jogarDado(Dice &);
 
   std::vector<Dice> dices;
 
  private:
-  friend OpenGLWindow;
-  GLuint m_program{};
   GLuint m_VAO{};
   GLuint m_VBO{};
   GLuint m_EBO{};
 
+  GLuint m_diffuseTexture{};
+
+  std::default_random_engine m_randomEngine; //gerador de números pseudo-aleatórios
+
   std::vector<Vertex> m_vertices;
   std::vector<GLuint> m_indices;
-  
-  std::default_random_engine m_randomEngine; //gerador de números pseudo-aleatórios
-  
-  void createBuffers();
-  void setupVAO();
+
+  bool m_hasNormals{false};
+  bool m_hasTexCoords{false};
 
   Dice inicializarDado();
-  void jogarDado(Dice &);
   void tempoGirandoAleatorio(Dice&);
   void eixoAlvoAleatorio(Dice&);
+  void computeNormals();
+  void createBuffers();
+  void standardize();
 };
 
 #endif

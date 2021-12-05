@@ -9,5 +9,5 @@
 # add_subdirectory(viewer1)
 # add_subdirectory(viewer2)
 # add_subdirectory(viewer3)
-add_subdirectory(viewer4)
-# add_subdirectory(dicetrack)
+# add_subdirectory(viewer4)
+add_subdirectory(dicetrack)
